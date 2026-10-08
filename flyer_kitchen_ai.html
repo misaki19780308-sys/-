@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<title>Flyer Kitchen AI</title>
+<style>
+:root{
+  --bg:#f6f7fb;--card:#fff;--text:#172033;--muted:#697386;--line:#e5e7ef;
+  --primary:#5b5ce2;--primary2:#7c3aed;--soft:#eef0ff;--good:#16805b;
+  --shadow:0 12px 35px rgba(20,28,60,.08);--r:20px;
+}
+*{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#f8f9ff 0,#f6f7fb 55%,#fff 100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Yu Gothic",sans-serif}
+button,input,select{font:inherit} button{cursor:pointer}
+.app{max-width:900px;margin:auto;padding:18px 16px 100px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 20px}
+.brand{display:flex;gap:11px;align-items:center}.logo{width:46px;height:46px;border-radius:15px;background:linear-gradient(135deg,var(--primary),var(--primary2));display:grid;place-items:center;color:white;font-size:23px;box-shadow:0 8px 20px #5b5ce233}
+h1{font-size:20px;margin:0}.sub{font-size:12px;color:var(--muted);margin-top:2px}
+.iconbtn{border:1px solid var(--line);background:#fff;border-radius:13px;padding:10px 12px}
+.progress{display:flex;gap:6px;margin:0 0 18px}.dot{height:5px;flex:1;background:#e6e8f0;border-radius:99px}.dot.active{background:linear-gradient(90deg,var(--primary),var(--primary2))}
+.step{display:none}.step.active{display:block}
+.card{background:var(--card);border:1px solid #edf0f5;border-radius:var(--r);padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+h2{font-size:22px;margin:4px 0 7px}.lead{color:var(--muted);font-size:14px;line-height:1.65;margin:0 0 18px}
+.drop{border:2px dashed #cfd4e5;border-radius:18px;padding:30px 18px;text-align:center;background:#fafbff;transition:.2s}
+.drop.drag{border-color:var(--primary);background:var(--soft)}
+.drop .camera{font-size:38px}.drop strong{display:block;margin:8px 0 4px}.drop small{color:var(--muted)}
+.preview{display:none;position:relative}.preview img{width:100%;max-height:390px;object-fit:contain;border-radius:16px;background:#f3f4f8}.remove{position:absolute;right:10px;top:10px;background:#111827cc;color:#fff;border:0;border-radius:12px;padding:8px 10px}
+.actions{display:flex;gap:10px;justify-content:space-between;margin-top:16px}.actions .right{margin-left:auto;display:flex;gap:10px}
+.btn{border:0;border-radius:14px;padding:12px 17px;font-weight:700}.primary{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 8px 18px #5b5ce22e}.secondary{background:#eef0f5;color:#263043}.ghost{background:#fff;border:1px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.grid3{grid-template-columns:repeat(3,1fr)}
+.choice{position:relative}.choice input{position:absolute;opacity:0}.choice label{display:block;border:1px solid var(--line);border-radius:14px;padding:13px;background:#fff;text-align:center;min-height:48px;transition:.15s}.choice input:checked+label{border-color:var(--primary);background:var(--soft);color:#4546bb;font-weight:700;box-shadow:inset 0 0 0 1px var(--primary)}
+.field{margin:14px 0}.field label.title{font-size:13px;font-weight:700;display:block;margin-bottom:7px}.input,.select{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;outline:none}.input:focus,.select:focus{border-color:var(--primary);box-shadow:0 0 0 3px #5b5ce21a}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.check{display:flex;align-items:center;gap:7px;background:#f8f9fc;border:1px solid var(--line);border-radius:11px;padding:9px 11px;font-size:13px}.check input{accent-color:var(--primary)}
+.person{padding:14px;border:1px solid var(--line);border-radius:15px;margin-top:10px;background:#fbfcff}.personhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;font-weight:700}
+.modecard{display:grid;grid-template-columns:1fr 1fr;gap:10px}.modecard label{padding:15px;border:1px solid var(--line);border-radius:15px}.modecard input{accent-color:var(--primary)}.modecard strong{display:block;margin-bottom:4px}.modecard small{color:var(--muted)}
+.rangebox{display:none;margin-top:13px;padding:13px;border-radius:14px;background:#f7f8ff;border:1px solid #e2e5ff}.rangebox.show{display:block}
+.status{padding:12px;border-radius:13px;background:#f7f8fb;color:var(--muted);font-size:13px;display:none}.status.show{display:block}
+.loader{display:inline-block;width:15px;height:15px;border:2px solid #d8daf5;border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-3px}@keyframes spin{to{transform:rotate(360deg)}}
+.resultHero{background:linear-gradient(135deg,#111936,#30227c);color:#fff;border-radius:22px;padding:20px;box-shadow:var(--shadow);margin-bottom:14px}.resultHero h2{font-size:25px}.tags{display:flex;flex-wrap:wrap;gap:6px}.tag{background:#ffffff18;border:1px solid #ffffff24;padding:6px 9px;border-radius:99px;font-size:11px}
+.recipe{border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:12px}.recipe h3{margin:0 0 8px;font-size:18px}.meta{display:flex;flex-wrap:wrap;gap:7px;color:var(--muted);font-size:12px}.meta span{background:#f5f6fa;border-radius:9px;padding:5px 8px}
+.recipegrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.recipe ul,.recipe ol{padding-left:21px;line-height:1.65;font-size:13px}.recipe li{margin:5px 0}.reason{background:#f7f8ff;padding:11px;border-radius:12px;font-size:13px;line-height:1.6}.nutrition{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.nut{background:#f8f9fb;border-radius:12px;padding:9px;text-align:center}.nut b{display:block;font-size:15px}.nut small{color:var(--muted);font-size:10px}
+.buyrow{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid var(--line)}.buyrow:last-child{border-bottom:0}.buyrow input{accent-color:var(--primary)}.buyrow.done span{text-decoration:line-through;color:#9aa1b1}.price{margin-left:auto;color:var(--good);font-weight:700;font-size:13px}
+.fav{border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px 10px}.fav.on{background:#fff0f4;color:#d63362;border-color:#ffd0dc}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.day{padding:8px 2px;border:1px solid var(--line);border-radius:10px;background:#fff;text-align:center;font-size:11px}.day input{display:block;margin:4px auto 0;accent-color:var(--primary)}
+.hidden{display:none!important}.muted{color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#111827;color:#fff;padding:11px 15px;border-radius:99px;font-size:13px;z-index:50;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1}
+details{border:1px solid var(--line);border-radius:15px;padding:11px 13px;background:#fff}details summary{font-weight:700;cursor:pointer}
+footer{text-align:center;color:#9aa1b1;font-size:11px;margin-top:25px}
+@media(max-width:620px){.app{padding:13px 12px 90px}.grid,.modecard,.recipegrid{grid-template-columns:1fr}.grid3{grid-template-columns:repeat(3,1fr)}h2{font-size:20px}.card{padding:15px}.actions{position:sticky;bottom:0;background:#f6f7fb;padding:10px 0 3px;z-index:10}.actions .btn{flex:1}.nutrition{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand"><div class="logo">🍳</div><div><h1>Flyer Kitchen AI</h1><div class="sub">チラシから、家族に合わせた献立を。</div></div></div>
+  <button class="iconbtn" id="settingsBtn" aria-label="設定">⚙️</button>
+</header>
+<div class="progress"><i class="dot active"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+
+<section class="step active" id="step1">
+  <div class="card">
+    <h2>まず、チラシを読み込もう</h2><p class="lead">スーパーのチラシを撮影・アップロードすると、商品名や価格をAIが読み取ってレシピに活用します。</p>
+    <div class="drop" id="drop">
+      <div class="camera">📷</div><strong>タップして撮影・画像を選択</strong><small>JPG / PNG / WEBP・最大10MB</small>
+      <input id="file" type="file" accept="image/*" capture="environment" hidden>
+    </div>
+    <div class="preview" id="preview"><img id="previewImg"><button class="remove" id="remove">削除</button></div>
+  </div>
+  <div class="card">
+    <h3>APIキー</h3><p class="lead">Gemini APIキーを設定するとAI生成が使えます。キーはこのブラウザのLocalStorageにのみ保存します。</p>
+    <div class="field"><input class="input" id="apiKey" type="password" placeholder="AIza..."></div>
+    <label class="check"><input id="saveKey" type="checkbox" checked> この端末にAPIキーを保存する</label>
+    <p class="muted" style="font-size:11px;margin-bottom:0">※公開サイトへそのまま掲載する場合、APIキーを利用者側で入力する方式を推奨します。</p>
+  </div>
+  <div class="actions"><div></div><div class="right"><button class="btn primary" id="to2" disabled>次へ →</button></div></div>
+</section>
+
+<section class="step" id="step2">
+  <div class="card">
+    <h2>誰が食べる？</h2><p class="lead">年代と人数を選ぶと、人数ごとの体調入力欄が自動で作られます。</p>
+    <div class="field"><label class="title">年代（複数選択可）</label><div class="chips">
+      <label class="check"><input type="checkbox" name="age" value="幼児">幼児</label>
+      <label class="check"><input type="checkbox" name="age" value="小学生">小学生</label>
+      <label class="check"><input type="checkbox" name="age" value="中高生">中高生</label>
+      <label class="check"><input type="checkbox" name="age" value="成人">成人</label>
+      <label class="check"><input type="checkbox" name="age" value="高齢者">高齢者</label>
+    </div></div>
+    <div class="field"><label class="title" for="people">食事を作る人数</label><select class="select" id="people">
+      <option value="1">1人</option><option value="2">2人</option><option value="3">3人</option><option value="4" selected>4人</option><option value="5">5人</option><option value="6">6人</option><option value="7">7人</option><option value="8">8人</option><option value="9">9人</option><option value="10">10人</option>
+    </select></div>
+    <div id="peopleForms"></div>
+  </div>
+  <div class="card">
+    <h3>アレルギー・避けたい食材</h3>
+    <div class="chips">
+      <label class="check"><input type="checkbox" name="allergy" value="卵">卵</label>
+      <label class="check"><input type="checkbox" name="allergy" value="乳">乳</label>
+      <label class="check"><input type="checkbox" name="allergy" value="小麦">小麦</label>
+      <label class="check"><input type="checkbox" name="allergy" value="そば">そば</label>
+      <label class="check"><input type="checkbox" name="allergy" value="落花生">落花生</label>
+      <label class="check"><input type="checkbox" name="allergy" value="えび">えび</label>
+      <label class="check"><input type="checkbox" name="allergy" value="かに">かに</label>
+      <label class="check"><input type="checkbox" name="allergy" value="大豆">大豆</label>
+    </div>
+    <div class="field"><input class="input" id="allergyOther" placeholder="その他（自由入力）"></div>
+  </div>
+  <div class="actions"><button class="btn secondary" data-back="1">← 戻る</button><div class="right"><button class="btn primary" id="to3">次へ →</button></div></div>
+</section>
+
+<section class="step" id="step3">
+  <div class="card">
+    <h2>どんな提案にする？</h2><p class="lead">作りたい料理のスタイルを選んでください。</p>
+    <div class="modecard">
+      <label><input type="radio" name="mode" value="dish" checked> <strong>🍽 一品料理モード</strong><small>和・洋・中を各1品。各料理300円以内を目標に提案。</small></label>
+      <label><input type="radio" name="mode" value="menu"> <strong>📅 献立モード</strong><small>1〜7日間を選んで、食材をなるべく使い切る献立。</small></label>
+    </div>
+    <div class="rangebox" id="rangeBox">
+      <div class="field"><label class="title">献立期間</label>
+        <div class="calendar" id="calendar"></div>
+      </div>
+      <div class="muted" style="font-size:11px">開始日を選び、日数（1〜7日）を指定できます。</div>
+      <select class="select" id="days" style="margin-top:8px"><option value="1">1日</option><option value="2">2日</option><option value="3">3日</option><option value="4">4日</option><option value="5">5日</option><option value="6">6日</option><option value="7">7日</option></select>
+    </div>
+  </div>
+  <div class="card">
+    <h3>予算・方針</h3>
+    <div class="field"><label class="title">追加購入も含めた方針</label>
+      <select class="select" id="budget"><option value="チラシ掲載商品を最優先">チラシ掲載商品を最優先</option><option value="できるだけ安く">できるだけ安く</option><option value="栄養バランス優先">栄養バランス優先</option><option value="価格と栄養のバランス">価格と栄養のバランス</option></select>
+    </div>
+  </div>
+  <div class="actions"><button class="btn secondary" data-back="2">← 戻る</button><div class="right"><button class="btn primary" id="generate">✨ AIで献立を作る</button></div></div>
+</section>
+
+<section class="step" id="step4">
+  <div class="card"><div class="status show" id="status"><span class="loader"></span> チラシ画像と条件をGeminiに送信しています…</div></div>
+</section>
+
+<section class="step" id="step5">
+  <div id="results"></div>
+  <div class="actions">
+    <button class="btn secondary" id="restart">↻ 初めからやり直す</button>
+    <div class="right"><button class="btn ghost" id="regen">↻ 再生成</button><button class="btn primary" id="favAll">♡ お気に入り保存</button></div>
+  </div>
+</section>
+
+<footer>Flyer Kitchen AI · Gemini APIを利用したレシピ提案アプリ</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+let imageData=null,lastRequest=null,lastResult=null;
+
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200)}
+function step(n){$$(".step").forEach((x,i)=>x.classList.toggle("active",i===n-1));$$(".dot").forEach((x,i)=>x.classList.toggle("active",i<n));window.scrollTo({top:0,behavior:"smooth"})}
+
+const savedKey=localStorage.getItem("flyerGeminiKey"); if(savedKey) $("#apiKey").value=savedKey;
+$("#settingsBtn").onclick=()=>{$("#apiKey").focus();toast("APIキー設定欄を表示しています")};
+
+$("#drop").onclick=()=>$("#file").click();
+$("#file").onchange=e=>loadFile(e.target.files[0]);
+["dragenter","dragover"].forEach(ev=>$("#drop").addEventListener(ev,e=>{e.preventDefault();$("#drop").classList.add("drag")}));
+["dragleave","drop"].forEach(ev=>$("#drop").addEventListener(ev,e=>{e.preventDefault();$("#drop").classList.remove("drag")}));
+$("#drop").addEventListener("drop",e=>loadFile(e.dataTransfer.files[0]));
+function loadFile(file){
+ if(!file)return;if(!file.type.startsWith("image/"))return toast("画像ファイルを選択してください");
+ if(file.size>10*1024*1024)return toast("画像は10MB以下にしてください");
+ const r=new FileReader();r.onload=()=>{imageData=r.result;$("#previewImg").src=imageData;$("#drop").style.display="none";$("#preview").style.display="block";$("#to2").disabled=false};r.readAsDataURL(file);
+}
+$("#remove").onclick=()=>{imageData=null;$("#file").value="";$("#preview").style.display="none";$("#drop").style.display="block";$("#to2").disabled=true};
+
+$("#to2").onclick=()=>{step(2);buildPeople()};
+$("#people").onchange=buildPeople;
+function buildPeople(){
+ const n=+$("#people").value, box=$("#peopleForms");box.innerHTML="";
+ for(let i=1;i<=n;i++){
+  box.insertAdjacentHTML("beforeend",`<div class="person"><div class="personhead"><span>👤 ${i}人目</span><span class="muted" style="font-size:11px">個別設定</span></div>
+  <select class="select condition"><option value="特になし">体調：特になし</option><option value="疲れやすい">疲れやすい</option><option value="血圧に配慮したい">血圧に配慮したい</option><option value="血糖値に配慮したい">血糖値に配慮したい</option><option value="鉄分を意識したい">鉄分を意識したい</option><option value="脂質に配慮したい">脂質に配慮したい</option><option value="胃腸にやさしいもの">胃腸にやさしいもの</option><option value="食欲がない">食欲がない</option><option value="運動後の回復を意識したい">運動後の回復を意識したい</option></select></div>`);
+ }
+}
+buildPeople();
+
+$$('input[name="mode"]').forEach(x=>x.onchange=()=>{$("#rangeBox").classList.toggle("show",x.value==="menu"&&x.checked)});
+function buildCalendar(){
+ const c=$("#calendar");c.innerHTML="";
+ const base=new Date();for(let i=0;i<7;i++){const d=new Date(base);d.setDate(base.getDate()+i);const val=d.toISOString().slice(0,10);
+  c.insertAdjacentHTML("beforeend",`<label class="day">${d.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric"})}<input type="radio" name="startDate" value="${val}" ${i===0?"checked":""}></label>`);
+ }
+}
+buildCalendar();
+
+function collect(){
+ const ages=$$('input[name="age"]:checked').map(x=>x.value);
+ const allergies=$$('input[name="allergy"]:checked').map(x=>x.value);if($("#allergyOther").value.trim())allergies.push($("#allergyOther").value.trim());
+ const conditions=$$(".condition").map((x,i)=>({person:i+1,condition:x.value}));
+ const mode=$('input[name="mode"]:checked').value;
+ return {ages,people:+$("#people").value,conditions,allergies,mode,budget:$("#budget").value,days:mode==="menu"?+$("#days").value:null,startDate:mode==="menu"?$('input[name="startDate"]:checked')?.value:null};
+}
+
+$("#generate").onclick=()=>generate();
+$("#regen").onclick=()=>generate(lastRequest);
+async function generate(req=null){
+ const key=$("#apiKey").value.trim();if(!key)return toast("Gemini APIキーを入力してください");
+ if(!imageData)return toast("チラシ画像を選択してください");
+ if($("#saveKey").checked)localStorage.setItem("flyerGeminiKey",key);else localStorage.removeItem("flyerGeminiKey");
+ lastRequest=req||collect();step(4);$("#status").innerHTML='<span class="loader"></span> Geminiがチラシの商品・価格を読み取り、条件に合わせて考えています…';
+ const payload={contents:[{role:"user",parts:[
+  {inlineData:{mimeType:imageData.match(/^data:(.*?);base64/)[1],data:imageData.split(",")[1]}},
+  {text:makePrompt(lastRequest)}
+ ]}],generationConfig:{temperature:0.7,responseMimeType:"application/json"}};
+ try{
+  const model="gemini-2.5-flash";
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`;
+  const res=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+  const data=await res.json();if(!res.ok)throw new Error(data?.error?.message||"APIエラー");
+  let txt=data.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("")||"";
+  txt=txt.replace(/^```json\s*/,"").replace(/\s*```$/,"").trim();
+  lastResult=JSON.parse(txt);renderResults(lastResult);step(5);
+ }catch(e){console.error(e);step(3);toast("生成に失敗しました："+e.message)}
+}
+function makePrompt(s){
+ return `あなたは管理栄養士・節約料理研究家・スーパーのチラシ分析AIです。添付画像から読み取れる商品名、価格、容量を最優先で使い、以下の条件でレシピ提案を作成してください。
+【設定】${JSON.stringify(s)}
+【重要ルール】
+1. 画像内の商品・価格を可能な限り正確に利用。読み取れない価格は推測しない。
+2. 一品料理モードは「和・洋・中」各1品、各料理の食材費が1人分300円以内を目標にする。人数分の総額も計算。
+3. 献立モードは指定日数分を作り、チラシ食材をなるべく使い切り、重複購入を減らす。
+4. アレルギー食材は絶対に使わない。自由入力も避ける。
+5. 人数分の分量・価格へ換算する。購入単位と使用量が違う場合は買い物リストに明記。
+6. 各手順には必ず火加減（強火/中火/弱火/火を止める等）を含める。電子レンジの場合はワット数と時間。
+7. 栄養バランスはエネルギー、たんぱく質、脂質、炭水化物、食物繊維、食塩相当量を可能な範囲で推定。医療的な診断・治療効果は断定しない。
+8. JSONのみを返す。Markdownを付けない。
+【JSON形式】
+{"title":"提案タイトル","summary":"全体概要","proposalReason":"この家庭条件とチラシからこの提案にした理由","flyerItems":[{"name":"商品名","price":0,"unit":"1袋"}],"recipes":[{"day":1,"category":"和","name":"料理名","servings":4,"cost":0,"ingredients":[{"name":"材料","amount":"200g","estimatedCost":100}],"steps":["中火で...","弱火で..."],"nutrition":{"kcal":0,"protein_g":0,"fat_g":0,"carb_g":0,"fiber_g":0,"salt_g":0},"reason":"選定理由"}],"shoppingList":[{"name":"商品","amount":"1袋","price":0,"fromFlyer":true,"note":"チラシ商品"}],"nutritionSummary":"栄養バランスの説明","notes":["注意事項"]}`;
+}
+function yen(n){return typeof n==="number"?Math.round(n).toLocaleString()+"円":n||"—"}
+function renderResults(r){
+ const key="fav_"+Date.now();
+ let html=`<div class="resultHero"><div class="tags"><span class="tag">${lastRequest.mode==="dish"?"一品料理":"献立"}モード</span><span class="tag">${lastRequest.people}人分</span>${lastRequest.days?`<span class="tag">${lastRequest.days}日間</span>`:""}</div><h2>${esc(r.title||"AIおすすめ献立")}</h2><p style="opacity:.82;line-height:1.6">${esc(r.summary||"")}</p><div style="font-size:12px;opacity:.72">提案理由：${esc(r.proposalReason||"")}</div></div>`;
+ if(r.flyerItems?.length)html+=`<div class="card"><h3>📰 チラシから読み取った商品</h3><div class="chips">${r.flyerItems.map(x=>`<span class="check">${esc(x.name)} <b>${yen(x.price)}</b></span>`).join("")}</div></div>`;
+ (r.recipes||[]).forEach((x,i)=>{
+  const n=x.nutrition||{};html+=`<div class="recipe"><div style="display:flex;justify-content:space-between;gap:8px"><div><h3>${esc(x.name)}</h3><div class="meta"><span>${esc(x.category||"料理")}</span><span>${x.servings||lastRequest.people}人分</span><span>約${yen(x.cost)}</span></div></div><button class="fav" data-i="${i}">♡</button></div>
+  <div class="recipegrid"><div><h4>材料</h4><ul>${(x.ingredients||[]).map(a=>`<li>${esc(a.name)}：${esc(a.amount)} <span class="muted">(${yen(a.estimatedCost)})</span></li>`).join("")}</ul></div>
+  <div><h4>作り方</h4><ol>${(x.steps||[]).map(a=>`<li>${esc(a)}</li>`).join("")}</ol></div></div>
+  <div class="reason">💡 ${esc(x.reason||"")}</div><h4>栄養目安（1人分）</h4><div class="nutrition"><div class="nut"><b>${n.kcal??"—"}</b><small>kcal</small></div><div class="nut"><b>${n.protein_g??"—"}g</b><small>たんぱく質</small></div><div class="nut"><b>${n.fat_g??"—"}g</b><small>脂質</small></div><div class="nut"><b>${n.salt_g??"—"}g</b><small>食塩相当量</small></div></div></div>`;
+ });
+ html+=`<div class="card"><h3>🛒 買い物リスト</h3><div id="shopping">${(r.shoppingList||[]).map((x,i)=>`<label class="buyrow"><input type="checkbox"><span>${esc(x.name)}：${esc(x.amount)}${x.note?` <small class="muted">— ${esc(x.note)}</small>`:""}</span><b class="price">${yen(x.price)}</b></label>`).join("")}</div><div style="margin-top:12px;font-size:12px;color:var(--muted)">※価格はチラシ記載価格を優先し、推定値には誤差があります。</div></div>`;
+ html+=`<div class="card"><h3>🥗 栄養バランス</h3><p class="lead">${esc(r.nutritionSummary||"")}</p>${r.notes?.length?`<details><summary>注意・メモ</summary><ul>${r.notes.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>`:""}</div>`;
+ $("#results").innerHTML=html;
+ $$(".fav").forEach(b=>b.onclick=()=>{b.classList.toggle("on");b.textContent=b.classList.contains("on")?"♥":"♡";if(b.classList.contains("on"))saveFavorite(r,b.dataset.i)});
+}
+function saveFavorite(r,i){const arr=JSON.parse(localStorage.getItem("flyerFavorites")||"[]");arr.push({savedAt:new Date().toISOString(),recipe:r.recipes?.[i]||r});localStorage.setItem("flyerFavorites",JSON.stringify(arr));toast("お気に入りに保存しました ♥")}
+$("#favAll").onclick=()=>{if(!lastResult)return;localStorage.setItem("flyerLastFavorite",JSON.stringify({savedAt:new Date().toISOString(),result:lastResult}));toast("今回の提案を保存しました ♥")};
+$("#restart").onclick=()=>{imageData=null;lastRequest=null;lastResult=null;$("#file").value="";$("#preview").style.display="none";$("#drop").style.display="block";$("#to2").disabled=true;step(1)};
+$$("[data-back]").forEach(b=>b.onclick=()=>step(+b.dataset.back));
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+</script>
+</body>
+</html>
